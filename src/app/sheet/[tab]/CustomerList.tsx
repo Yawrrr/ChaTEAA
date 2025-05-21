@@ -2,13 +2,7 @@
 
 import { useState } from "react";
 import { format, parse } from "date-fns";
-
-interface GroupedOrders {
-  [date: string]: {
-    noon: Order[];
-    evening: Order[];
-  };
-}
+import { Order } from "@/app/models/order";
 
 export default function CustomerList({ order }: { order: Order }) {
   const [isExpanded, setIsExpanded] = useState(false);
@@ -179,5 +173,3 @@ export default function CustomerList({ order }: { order: Order }) {
     </div>
   );
 }
-
-function OrderCard({ order }: { order: Order }) {}

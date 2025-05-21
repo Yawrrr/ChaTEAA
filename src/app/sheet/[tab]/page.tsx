@@ -5,6 +5,7 @@ import { useParams, useRouter } from "next/navigation";
 import DrinkDashboard from "@/app/sheet/[tab]/DrinkDashboard";
 import OrderList from "@/app/sheet/[tab]/CustomerList";
 import Loading from "@/app/loading";
+import { Order } from "@/app/models/order";
 
 export default function SheetPage() {
   const DRINKS_PRICES: {

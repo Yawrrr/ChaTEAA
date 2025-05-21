@@ -1,5 +1,4 @@
-
-interface Order {
+export interface Order {
   timestamp: string;
   email: string;
   name: string;
@@ -13,6 +12,16 @@ interface Order {
     quantity: string;
     price: number;
   }>;
-  paymentProof: string;
-  remarks: string;
+  paymentProof?: string;
+  remarks?: string;
+}
+
+export interface DrinkSummary {
+  [key: string]: {
+    total: number;
+    customizations: {
+      [key: string]: number;
+    };
+    totalPrice: number;
+  };
 }

@@ -1,7 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { format, parse } from "date-fns";
+import { useState } from "react";
 
 interface Order {
   timestamp: string;
@@ -23,10 +22,6 @@ export default function DrinkDashboard({
 }) {
   const [selectedDrink, setSelectedDrink] = useState<string>("");
   const [isExpanded, setIsExpanded] = useState(false);
-
-  // useEffect(() => {
-  //   console.log(orders);
-  // }, [orders]);
 
   // Calculate total drinks
   const totalDrinks = Object.values(drinkSummary).reduce(
