@@ -1,10 +1,12 @@
+import { google } from "googleapis";
 import { NextResponse } from "next/server";
 import path from "path";
 import { promises as fs } from "fs";
-import { google } from "googleapis";
-import { parse, format } from "date-fns";
 
-export async function GET(request: Request, { params }: { params: { tab: string } }) {
+export async function GET(
+  request: Request,
+  { params }: { params: { tab: string } }
+) {
   const { tab } = await params;
   try {
     const keyFilePath = path.join(
@@ -20,7 +22,7 @@ export async function GET(request: Request, { params }: { params: { tab: string 
 
     const sheets = google.sheets({ version: "v4", auth });
     const spreadsheetId = process.env.SPREEDSHEET_ID;
-    const range = `${tab}!A:X`; 
+    const range = `${tab}!A:X`;
     const response = await sheets.spreadsheets.values.get({
       spreadsheetId,
       range,

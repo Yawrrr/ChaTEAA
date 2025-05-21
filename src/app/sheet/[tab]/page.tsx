@@ -6,6 +6,7 @@ import DrinkDashboard from "@/app/sheet/[tab]/DrinkDashboard";
 import OrderList from "@/app/sheet/[tab]/CustomerList";
 import Loading from "@/app/loading";
 import { Order } from "@/app/models/order";
+import { DrinkSummary } from "@/app/models/drinkSummary";
 
 export default function SheetPage() {
   const DRINKS_PRICES: {
@@ -159,7 +160,6 @@ export default function SheetPage() {
 
     return summary;
   };
-
 
   return (
     <div className="min-h-screen bg-[#fff4eb]">

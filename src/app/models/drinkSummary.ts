@@ -1,5 +1,4 @@
-
-interface DrinkSummary {
+export interface DrinkSummary {
   [key: string]: {
     total: number;
     customizations: {

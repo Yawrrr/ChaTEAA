@@ -1,5 +1,6 @@
 "use client";
 
+import { DrinkSummary } from "@/app/models/drinkSummary";
 import { useState } from "react";
 
 interface Order {
