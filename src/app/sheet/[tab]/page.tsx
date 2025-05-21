@@ -79,7 +79,6 @@ export default function SheetPage() {
               break;
             }
             const drinkKey = `${row[i]} - ${row[i + 1]}`;
-            // console.log("Drink Key : ", drinkKey);
             if (!DRINKS_PRICES[drinkKey]) {
               console.warn(`Drink not found in DRINKS_PRICES: ${drinkKey}`);
               continue;
@@ -118,7 +117,6 @@ export default function SheetPage() {
             remarks: row[row.length] || "",
           };
           setOrder((prev) => [...prev, order as Order]);
-          console.log(order);
         });
       }
       setLoading(false);
@@ -127,7 +125,6 @@ export default function SheetPage() {
   }, [tab]);
 
   useEffect(() => {
-    // console.log("order", order);
     const summary = calculateDrinkSummary(order);
     setDrinkSummary(summary);
   }, [order]);

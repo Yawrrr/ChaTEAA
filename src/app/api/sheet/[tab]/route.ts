@@ -3,12 +3,12 @@ import { NextResponse } from "next/server";
 import path from "path";
 import { promises as fs } from "fs";
 
-export async function GET(
-  request: Request,
-  { params }: { params: { tab: string } }
-) {
-  const { tab } = await params;
+export async function GET(request: Request) {
   try {
+    const url = new URL(request.url);
+    const pathnameParts = url.pathname.split("/");
+    const tab = pathnameParts[pathnameParts.length - 1]; 
+
     const keyFilePath = path.join(
       process.cwd(),
       "config/google-service-account.json"
@@ -22,7 +22,7 @@ export async function GET(
 
     const sheets = google.sheets({ version: "v4", auth });
     const spreadsheetId = process.env.SPREEDSHEET_ID;
-    const range = `${tab}!A:X`;
+    const range = `${tab}!A:X`; 
     const response = await sheets.spreadsheets.values.get({
       spreadsheetId,
       range,
@@ -38,5 +38,4 @@ export async function GET(
       { status: 500 }
     );
   }
-  return NextResponse.json({ tab });
 }
