@@ -1,7 +1,5 @@
 import { google } from "googleapis";
 import { NextResponse } from "next/server";
-import path from "path";
-import { promises as fs } from "fs";
 
 export async function GET(request: Request) {
   try {
@@ -9,14 +7,11 @@ export async function GET(request: Request) {
     const pathnameParts = url.pathname.split("/");
     const tab = pathnameParts[pathnameParts.length - 1]; 
 
-    const keyFilePath = path.join(
-      process.cwd(),
-      "config/google-service-account.json"
-    );
-    const keyFile = await fs.readFile(keyFilePath, "utf-8");
-
     const auth = new google.auth.GoogleAuth({
-      credentials: JSON.parse(keyFile),
+      credentials: {
+        client_email: process.env.GOOGLE_CLIENT_EMAIL,
+        private_key: process.env.GOOGLE_PRIVATE_KEY,
+      },
       scopes: ["https://www.googleapis.com/auth/spreadsheets.readonly"],
     });
 

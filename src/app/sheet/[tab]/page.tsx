@@ -58,68 +58,89 @@ export default function SheetPage() {
       setOrder([]);
       setDrinkSummary({});
 
-      const response = await fetch(`/api/sheet/${tab}`, {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
-      const data = await response.json();
-      const rows = data.data;
-      if (rows[0][0] === "Timestamp") {
-        const order = rows.slice(1);
-        order.forEach((row: string[]) => {
-          if (!row || row.length === 0 || !row[0]) {
-            return;
-          }
-
-          const drinks = [];
-          for (let i = 5; i < row.length; i += 6) {
-            if (row[i] === "No" || row[i] === "" || !row[i]) {
-              break;
-            }
-            const drinkKey = `${row[i]} - ${row[i + 1]}`;
-            if (!DRINKS_PRICES[drinkKey]) {
-              console.warn(`Drink not found in DRINKS_PRICES: ${drinkKey}`);
-              continue;
-            }
-
-            if (i === 17) {
-              const drink = {
-                drink: DRINKS_PRICES[drinkKey].drink,
-                size: row[i + 1],
-                iceLevel: row[i + 2],
-                sugarLevel: row[i + 4],
-                quantity: row[i + 3],
-                price: DRINKS_PRICES[drinkKey].price,
-              };
-              drinks.push(drink);
-            } else {
-              const drink = {
-                drink: DRINKS_PRICES[drinkKey].drink,
-                size: row[i + 1],
-                iceLevel: row[i + 2],
-                sugarLevel: row[i + 3],
-                quantity: row[i + 4],
-                price: DRINKS_PRICES[drinkKey].price,
-              };
-              drinks.push(drink);
-            }
-          }
-          const order = {
-            timestamp: row[0],
-            email: row[1],
-            name: row[2],
-            contact: row[3],
-            block: row[4],
-            drinks,
-            paymentProof: row[row.length - 1],
-            remarks: row[row.length] || "",
-          };
-          setOrder((prev) => [...prev, order as Order]);
+      try {
+        const response = await fetch(`/api/sheet/${tab}`, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
         });
+
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const data = await response.json();
+        const rows = data.data;
+
+        if (!rows || !Array.isArray(rows) || rows.length === 0) {
+          console.warn("No data received from the API");
+          setLoading(false);
+          return;
+        }
+
+        if (rows[0][0] === "Timestamp") {
+          const order = rows.slice(1);
+          const processedOrders: Order[] = [];
+
+          order.forEach((row: string[]) => {
+            if (!row || row.length === 0 || !row[0]) {
+              return;
+            }
+
+            const drinks = [];
+            for (let i = 5; i < row.length; i += 6) {
+              if (row[i] === "No" || row[i] === "" || !row[i]) {
+                break;
+              }
+              const drinkKey = `${row[i]} - ${row[i + 1]}`;
+              if (!DRINKS_PRICES[drinkKey]) {
+                console.warn(`Drink not found in DRINKS_PRICES: ${drinkKey}`);
+                continue;
+              }
+
+              if (i === 17) {
+                const drink = {
+                  drink: DRINKS_PRICES[drinkKey].drink,
+                  size: row[i + 1],
+                  iceLevel: row[i + 2],
+                  sugarLevel: row[i + 4],
+                  quantity: row[i + 3],
+                  price: DRINKS_PRICES[drinkKey].price,
+                };
+                drinks.push(drink);
+              } else {
+                const drink = {
+                  drink: DRINKS_PRICES[drinkKey].drink,
+                  size: row[i + 1],
+                  iceLevel: row[i + 2],
+                  sugarLevel: row[i + 3],
+                  quantity: row[i + 4],
+                  price: DRINKS_PRICES[drinkKey].price,
+                };
+                drinks.push(drink);
+              }
+            }
+            const order = {
+              timestamp: row[0],
+              email: row[1],
+              name: row[2],
+              contact: row[3],
+              block: row[4],
+              drinks,
+              paymentProof: row[row.length - 1],
+              remarks: row[row.length] || "",
+            };
+            processedOrders.push(order as Order);
+          });
+
+          setOrder(processedOrders);
+        }
+      } catch (error) {
+        console.error("Error fetching sheet data:", error);
+      } finally {
+        setLoading(false);
       }
-      setLoading(false);
     };
     fetchSheetData();
   }, [tab]);
@@ -196,9 +217,13 @@ export default function SheetPage() {
                 Customer Orders
               </h2>
               <div className="space-y-4">
-                {order.map((order, index) => (
-                  <OrderList key={index} order={order} />
-                ))}
+                {order && order.length > 0 ? (
+                  order.map((order, index) => (
+                    <OrderList key={index} order={order} />
+                  ))
+                ) : (
+                  <p className="text-gray-500 text-center">No orders found</p>
+                )}
               </div>
             </div>
           </div>
