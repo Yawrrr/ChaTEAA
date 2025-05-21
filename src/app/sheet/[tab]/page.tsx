@@ -4,6 +4,7 @@ import React, { useEffect, useState, useRef } from "react";
 import { useParams, useRouter } from "next/navigation";
 import DrinkDashboard from "@/app/sheet/[tab]/DrinkDashboard";
 import OrderList from "@/app/sheet/[tab]/CustomerList";
+import Loading from "@/app/loading";
 
 export default function SheetPage() {
   const DRINKS_PRICES: {
@@ -118,6 +119,7 @@ export default function SheetPage() {
           console.log(order);
         });
       }
+      setLoading(false);
     };
     fetchSheetData();
   }, [tab]);
@@ -126,7 +128,6 @@ export default function SheetPage() {
     // console.log("order", order);
     const summary = calculateDrinkSummary(order);
     setDrinkSummary(summary);
-    setLoading(false);
   }, [order]);
 
   const calculateDrinkSummary = (orders: Order[]): DrinkSummary => {
@@ -158,49 +159,52 @@ export default function SheetPage() {
     return summary;
   };
 
-  if (loading) {
-    return <div className="min-h-screen bg-gray-50 p-8">Loading...</div>;
-  }
 
   return (
-    <div>
+    <div className="min-h-screen bg-[#fff4eb]">
       <div className="max-w-7xl mx-auto p-8">
-        <button
-          onClick={() => router.push("/")}
-          className="mb-6 flex items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors"
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            className="h-5 w-5"
-            viewBox="0 0 20 20"
-            fill="currentColor"
+        <div className="flex items-center justify-between mb-8">
+          <h1 className="text-3xl font-bold text-[#8B4513]">
+            {tab} Order Summary
+          </h1>
+          <button
+            onClick={() => router.push("/")}
+            className="flex items-center gap-2 px-4 py-2 bg-white text-[#8B4513] rounded-lg border border-[#D2B48C] hover:bg-[#fff4eb] transition-colors duration-300"
           >
-            <path
-              fillRule="evenodd"
-              d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z"
-              clipRule="evenodd"
-            />
-          </svg>
-          Back to Home
-        </button>
-        <DrinkDashboard orders={order} drinkSummary={drinkSummary} />
-        <div className="mt-8">
-          <div className="max-w-6xl mx-auto p-4">
-            <h1 className="text-2xl font-bold mb-6">Customer List</h1>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-5 w-5"
+              viewBox="0 0 20 20"
+              fill="currentColor"
+            >
+              <path
+                fillRule="evenodd"
+                d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z"
+                clipRule="evenodd"
+              />
+            </svg>
+            Back to Home
+          </button>
+        </div>
 
-            <div className="p-4">
-              <div className="mb-8">
-                <>
-                  <div className="mb-6 p-4 bg-amber-50 rounded-lg">
-                    {order.map((order, index) => (
-                      <OrderList key={index} order={order} />
-                    ))}
-                  </div>
-                </>
+        {loading ? (
+          <Loading />
+        ) : (
+          <div className="space-y-8">
+            <DrinkDashboard orders={order} drinkSummary={drinkSummary} />
+
+            <div className="bg-white rounded-xl shadow-md p-6">
+              <h2 className="text-2xl font-bold text-[#8B4513] mb-6">
+                Customer Orders
+              </h2>
+              <div className="space-y-4">
+                {order.map((order, index) => (
+                  <OrderList key={index} order={order} />
+                ))}
               </div>
             </div>
           </div>
-        </div>
+        )}
       </div>
     </div>
   );
