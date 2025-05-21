@@ -5,5 +5,6 @@ interface DrinkSummary {
     customizations: {
       [key: string]: number;
     };
+    totalPrice: number;
   };
 }

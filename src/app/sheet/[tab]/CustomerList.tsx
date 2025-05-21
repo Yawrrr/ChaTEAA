@@ -15,19 +15,26 @@ export default function CustomerList({ order }: { order: Order }) {
 
   return (
     <div className="mb-4 p-4 border rounded-lg">
-      <div 
+      <div
         className="flex justify-between items-center cursor-pointer"
         onClick={() => setIsExpanded(!isExpanded)}
       >
         <div className="flex items-center gap-2">
           <span className="font-semibold">{order.name}</span>
           <span className="text-gray-500">
-            ({format(parse(order.timestamp, "M/d/yyyy H:mm:ss", new Date()), "h:mm a")})
+            (
+            {format(
+              parse(order.timestamp, "M/d/yyyy H:mm:ss", new Date()),
+              "h:mm a"
+            )}
+            )
           </span>
         </div>
         <svg
           xmlns="http://www.w3.org/2000/svg"
-          className={`h-5 w-5 transform transition-transform ${isExpanded ? 'rotate-180' : ''}`}
+          className={`h-5 w-5 transform transition-transform ${
+            isExpanded ? "rotate-180" : ""
+          }`}
           viewBox="0 0 20 20"
           fill="currentColor"
         >
@@ -64,7 +71,7 @@ export default function CustomerList({ order }: { order: Order }) {
             {order.drinks.map((drink, drinkIndex) => (
               <div key={drinkIndex} className="ml-4 mb-2">
                 <p>
-                  • {drink.quantity}x {drink.drink}
+                  • {drink.quantity} x {drink.drink}
                 </p>
                 <p className="ml-4">Size: {drink.size}</p>
                 <p className="ml-4">Ice: {drink.iceLevel}</p>
@@ -133,5 +140,4 @@ export default function CustomerList({ order }: { order: Order }) {
   );
 }
 
-function OrderCard({ order }: { order: Order }) {
-}
+function OrderCard({ order }: { order: Order }) {}

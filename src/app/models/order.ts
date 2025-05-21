@@ -11,6 +11,7 @@ interface Order {
     iceLevel: string;
     sugarLevel: string;
     quantity: string;
+    price: number;
   }>;
   paymentProof: string;
   remarks: string;

@@ -3,15 +3,6 @@
 import { useState, useEffect } from "react";
 import { format, parse } from "date-fns";
 
-interface DrinkSummary {
-  [key: string]: {
-    total: number;
-    customizations: {
-      [key: string]: number;
-    };
-  };
-}
-
 interface Order {
   timestamp: string;
   drinks: Array<{
@@ -30,17 +21,33 @@ export default function DrinkDashboard({
   orders: Order[];
   drinkSummary: DrinkSummary;
 }) {
-  const [selectedDrink, setSelectedDrink] = useState<string | null>(null);
+  const [selectedDrink, setSelectedDrink] = useState<string>("");
+  const [isExpanded, setIsExpanded] = useState(false);
 
-  useEffect(() => {
-    console.log(orders);
-  }, [orders]);
+  // useEffect(() => {
+  //   console.log(orders);
+  // }, [orders]);
 
   // Calculate total drinks
   const totalDrinks = Object.values(drinkSummary).reduce(
     (acc, curr) => acc + (curr.total || 0),
     0
   );
+
+  const totalSales = Object.values(drinkSummary).reduce(
+    (acc, curr) => acc + (curr.totalPrice || 0),
+    0
+  );
+
+  const toggleExpanded = (drink: string) => {
+    if (drink === selectedDrink) {
+      setIsExpanded(false);
+      setSelectedDrink("");
+    } else {
+      setSelectedDrink(drink);
+      setIsExpanded(true);
+    }
+  };
 
   return (
     <div className="p-6 bg-white rounded-lg shadow-lg">
@@ -62,16 +69,16 @@ export default function DrinkDashboard({
         </div>
         <div className="bg-purple-50 p-4 rounded-lg">
           <h3 className="text-lg font-semibold text-purple-700">
-            Unique Drinks
+            Total Sales
           </h3>
           <p className="text-3xl font-bold text-purple-900">
-            {Object.keys(drinkSummary).length || 0}
+            RM {totalSales || 0}
           </p>
         </div>
       </div>
 
       {/* Drink Details */}
-      {selectedDrink && drinkSummary[selectedDrink] && (
+      {isExpanded && drinkSummary[selectedDrink] && (
         <div className="mt-8 p-4 border rounded-lg">
           <h3 className="text-xl font-semibold mb-4">
             {selectedDrink} Details
@@ -97,7 +104,7 @@ export default function DrinkDashboard({
             <div
               key={drink}
               className="p-4 border rounded-lg hover:bg-gray-50 cursor-pointer"
-              onClick={() => setSelectedDrink(drink)}
+              onClick={() => toggleExpanded(drink)}
             >
               <div className="flex justify-between items-center">
                 <span className="font-medium">{drink}</span>

@@ -1,18 +1,60 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { useParams, useRouter } from "next/navigation";
 import DrinkDashboard from "@/app/sheet/[tab]/DrinkDashboard";
 import OrderList from "@/app/sheet/[tab]/CustomerList";
 
-export default function SheetPage({ params }: { params: { tab: string } }) {
+export default function SheetPage() {
+  const DRINKS_PRICES: {
+    [key: string]: {
+      drink: string;
+      price: number;
+    };
+  } = {
+    "DA HONG PAO MILK TEA🍃 (RM15.00 / RM17.00) - Regular": {
+      drink: "Da Hong Pao Milk Tea",
+      price: 15,
+    },
+    "DA HONG PAO MILK TEA🍃 (RM15.00 / RM17.00) - Large": {
+      drink: "Da Hong Pao Milk Tea",
+      price: 17,
+    },
+    "JASMINE GREEN MILK TEA🌸 (RM14.00 / RM16.00) - Regular": {
+      drink: "Jasmine Green Milk Tea",
+      price: 14,
+    },
+    "JASMINE GREEN MILK TEA🌸 (RM14.00 / RM16.00) - Large": {
+      drink: "Jasmine Green Milk Tea",
+      price: 16,
+    },
+    "WHITE PEACH OOLONG MILK TEA🍑 (RM14.00 / RM16.00) - Regular": {
+      drink: "White Peach Oolong Milk Tea",
+      price: 14,
+    },
+    "WHITE PEACH OOLONG MILK TEA🍑 (RM14.00 / RM16.00) - Large": {
+      drink: "White Peach Oolong Milk Tea",
+      price: 16,
+    },
+  };
   const router = useRouter();
   const { tab } = useParams();
   const [order, setOrder] = useState<Order[]>([]);
   const [drinkSummary, setDrinkSummary] = useState<DrinkSummary>({});
   const [loading, setLoading] = useState(true);
+  const isFirstRender = useRef(true);
+
   useEffect(() => {
     const fetchSheetData = async () => {
+      if (!isFirstRender.current) {
+        return;
+      }
+      isFirstRender.current = false;
+
+      setLoading(true);
+      setOrder([]);
+      setDrinkSummary({});
+
       const response = await fetch(`/api/sheet/${tab}`, {
         method: "GET",
         headers: {
@@ -24,29 +66,42 @@ export default function SheetPage({ params }: { params: { tab: string } }) {
       if (rows[0][0] === "Timestamp") {
         const order = rows.slice(1);
         order.forEach((row: string[]) => {
+          if (!row || row.length === 0 || !row[0]) {
+            return;
+          }
+
           const drinks = [];
           for (let i = 5; i < row.length; i += 6) {
-            if (row[i] === "No" || row[i] === "") {
+            if (row[i] === "No" || row[i] === "" || !row[i]) {
               break;
             }
+            const drinkKey = `${row[i]} - ${row[i + 1]}`;
+            // console.log("Drink Key : ", drinkKey);
+            if (!DRINKS_PRICES[drinkKey]) {
+              console.warn(`Drink not found in DRINKS_PRICES: ${drinkKey}`);
+              continue;
+            }
+
             if (i === 17) {
               const drink = {
-                drink: row[i],
+                drink: DRINKS_PRICES[drinkKey].drink,
                 size: row[i + 1],
                 iceLevel: row[i + 2],
                 sugarLevel: row[i + 4],
                 quantity: row[i + 3],
+                price: DRINKS_PRICES[drinkKey].price,
               };
               drinks.push(drink);
             } else {
               const drink = {
-                drink: row[i],
+                drink: DRINKS_PRICES[drinkKey].drink,
                 size: row[i + 1],
                 iceLevel: row[i + 2],
                 sugarLevel: row[i + 3],
                 quantity: row[i + 4],
+                price: DRINKS_PRICES[drinkKey].price,
               };
-            drinks.push(drink);
+              drinks.push(drink);
             }
           }
           const order = {
@@ -59,14 +114,20 @@ export default function SheetPage({ params }: { params: { tab: string } }) {
             paymentProof: row[row.length - 1],
             remarks: row[row.length] || "",
           };
-          setOrder((prev) => [...prev, order]);
+          setOrder((prev) => [...prev, order as Order]);
+          console.log(order);
         });
       }
     };
     fetchSheetData();
   }, [tab]);
 
-  useEffect(() => {});
+  useEffect(() => {
+    // console.log("order", order);
+    const summary = calculateDrinkSummary(order);
+    setDrinkSummary(summary);
+    setLoading(false);
+  }, [order]);
 
   const calculateDrinkSummary = (orders: Order[]): DrinkSummary => {
     const summary: DrinkSummary = {};
@@ -80,10 +141,12 @@ export default function SheetPage({ params }: { params: { tab: string } }) {
           summary[key] = {
             total: 0,
             customizations: {},
+            totalPrice: 0,
           };
         }
 
         summary[key].total += parseInt(drink.quantity);
+        summary[key].totalPrice += drink.price * parseInt(drink.quantity);
 
         if (!summary[key].customizations[customization]) {
           summary[key].customizations[customization] = 0;
@@ -94,12 +157,6 @@ export default function SheetPage({ params }: { params: { tab: string } }) {
 
     return summary;
   };
-  useEffect(() => {
-    console.log("order", order);
-    const summary = calculateDrinkSummary(order);
-    setDrinkSummary((prev) => ({ ...prev, ...summary }));
-    setLoading(false);
-  }, [order]);
 
   if (loading) {
     return <div className="min-h-screen bg-gray-50 p-8">Loading...</div>;
