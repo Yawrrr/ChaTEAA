@@ -84,7 +84,9 @@ export default function CustomerList({ order }: { order: Order }) {
                       clipRule="evenodd"
                     />
                   </svg>
-                  Block {order.block}
+                  {order.college
+                    ? `${order.block}, ${order.college}`
+                    : `Block ${order.block}`}
                 </p>
               </div>
             </div>

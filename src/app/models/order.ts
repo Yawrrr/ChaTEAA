@@ -3,6 +3,7 @@ export interface Order {
   email: string;
   name: string;
   contact: string;
+  college?: string;
   block: string;
   drinks: Array<{
     drink: string;

@@ -89,7 +89,8 @@ export default function SheetPage() {
             }
 
             const drinks = [];
-            for (let i = 5; i < row.length; i += 6) {
+            const baseNumber = tab === "21-5-2025" ? 5 : 6;
+            for (let i = baseNumber; i < row.length; i += 6) {
               if (row[i] === "No" || row[i] === "" || !row[i]) {
                 break;
               }
@@ -99,7 +100,7 @@ export default function SheetPage() {
                 continue;
               }
 
-              if (i === 17) {
+              if (i === 17 && tab === "21-5-2025") {
                 const drink = {
                   drink: DRINKS_PRICES[drinkKey].drink,
                   size: row[i + 1],
@@ -126,10 +127,11 @@ export default function SheetPage() {
               email: row[1],
               name: row[2],
               contact: row[3],
-              block: row[4],
+              college: tab === "21-5-2025" ? null : row[4],
+              block: tab === "21-5-2025" ? row[4] : row[5],
               drinks,
               paymentProof: row[row.length - 1],
-              remarks: row[row.length] || "",
+              remarks: tab === "21-5-2025" ? row[row.length] : "",
             };
             processedOrders.push(order as Order);
           });
