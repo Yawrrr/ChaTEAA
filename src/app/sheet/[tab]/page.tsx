@@ -5,6 +5,7 @@ import { useParams, useRouter } from "next/navigation";
 import DrinkDashboard from "@/app/sheet/[tab]/DrinkDashboard";
 import OrderList from "@/app/sheet/[tab]/CustomerList";
 import Loading from "@/app/loading";
+import AddressDashboard from "@/app/sheet/[tab]/AddressDashboard";
 import { Order } from "@/app/models/order";
 import { DrinkSummary } from "@/app/models/drinkSummary";
 
@@ -213,6 +214,8 @@ export default function SheetPage() {
         ) : (
           <div className="space-y-8">
             <DrinkDashboard orders={order} drinkSummary={drinkSummary} />
+
+            <AddressDashboard orders={order} />
 
             <div className="bg-white rounded-xl shadow-md p-6">
               <h2 className="text-2xl font-bold text-[#8B4513] mb-6">
