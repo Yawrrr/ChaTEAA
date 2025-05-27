@@ -48,7 +48,7 @@ export default function CustomerList({ order }: { order: Order }) {
                 Customer Details
               </h3>
               <div className="space-y-2 text-[#8B4513]">
-                <p className="flex items-center gap-2 font-serif">
+                {/* <p className="flex items-center gap-2 font-serif">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     className="h-4 w-4"
@@ -59,7 +59,7 @@ export default function CustomerList({ order }: { order: Order }) {
                     <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z" />
                   </svg>
                   {order.email}
-                </p>
+                </p> */}
                 <p className="flex items-center gap-2 font-serif">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
