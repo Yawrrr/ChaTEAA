@@ -7,7 +7,6 @@ import OrderList from "@/app/sheet/[tab]/CustomerList";
 import Loading from "@/app/loading";
 import AddressDashboard from "@/app/sheet/[tab]/AddressDashboard";
 import { Order } from "@/app/models/order";
-import { DrinkSummary } from "@/app/models/drinkSummary";
 
 export default function SheetPage() {
   const DRINKS_PRICES: {
@@ -44,7 +43,6 @@ export default function SheetPage() {
   const router = useRouter();
   const { tab } = useParams();
   const [order, setOrder] = useState<Order[]>([]);
-  const [drinkSummary, setDrinkSummary] = useState<DrinkSummary>({});
   const [loading, setLoading] = useState(true);
   const isFirstRender = useRef(true);
 
@@ -57,7 +55,6 @@ export default function SheetPage() {
 
       setLoading(true);
       setOrder([]);
-      setDrinkSummary({});
 
       try {
         const response = await fetch(`/api/sheet/${tab}`, {
@@ -147,40 +144,6 @@ export default function SheetPage() {
     };
     fetchSheetData();
   }, [tab]);
-
-  useEffect(() => {
-    const summary = calculateDrinkSummary(order);
-    setDrinkSummary(summary);
-  }, [order]);
-
-  const calculateDrinkSummary = (orders: Order[]): DrinkSummary => {
-    const summary: DrinkSummary = {};
-
-    orders.forEach((order) => {
-      order.drinks.forEach((drink) => {
-        const key = `${drink.drink} (${drink.size})`;
-        const customization = `${drink.iceLevel} , ${drink.sugarLevel} `;
-
-        if (!summary[key]) {
-          summary[key] = {
-            total: 0,
-            customizations: {},
-            totalPrice: 0,
-          };
-        }
-
-        summary[key].total += parseInt(drink.quantity);
-        summary[key].totalPrice += drink.price * parseInt(drink.quantity);
-
-        if (!summary[key].customizations[customization]) {
-          summary[key].customizations[customization] = 0;
-        }
-        summary[key].customizations[customization] += parseInt(drink.quantity);
-      });
-    });
-
-    return summary;
-  };
 
   return (
     <div className="min-h-screen bg-[#fff4eb]">

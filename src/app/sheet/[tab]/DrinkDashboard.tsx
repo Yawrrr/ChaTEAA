@@ -4,38 +4,6 @@ import { DrinkSummary } from "@/app/models/drinkSummary";
 import { useEffect, useState } from "react";
 import { Order } from "@/app/models/order";
 
-const DRINKS_PRICES: {
-  [key: string]: {
-    drink: string;
-    price: number;
-  };
-} = {
-  "DA HONG PAO MILK TEA🍃 (RM15.00 / RM17.00) - Regular": {
-    drink: "Da Hong Pao Milk Tea",
-    price: 15,
-  },
-  "DA HONG PAO MILK TEA🍃 (RM15.00 / RM17.00) - Large": {
-    drink: "Da Hong Pao Milk Tea",
-    price: 17,
-  },
-  "JASMINE GREEN MILK TEA🌸 (RM14.00 / RM16.00) - Regular": {
-    drink: "Jasmine Green Milk Tea",
-    price: 14,
-  },
-  "JASMINE GREEN MILK TEA🌸 (RM14.00 / RM16.00) - Large": {
-    drink: "Jasmine Green Milk Tea",
-    price: 16,
-  },
-  "WHITE PEACH OOLONG MILK TEA🍑 (RM14.00 / RM16.00) - Regular": {
-    drink: "White Peach Oolong Milk Tea",
-    price: 14,
-  },
-  "WHITE PEACH OOLONG MILK TEA🍑 (RM14.00 / RM16.00) - Large": {
-    drink: "White Peach Oolong Milk Tea",
-    price: 16,
-  },
-};
-
 export default function DrinkDashboard({
   orders,
 }: {
