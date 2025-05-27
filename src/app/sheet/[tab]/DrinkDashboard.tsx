@@ -1,28 +1,54 @@
 "use client";
 
 import { DrinkSummary } from "@/app/models/drinkSummary";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { Order } from "@/app/models/order";
 
-interface Order {
-  timestamp: string;
-  drinks: Array<{
+const DRINKS_PRICES: {
+  [key: string]: {
     drink: string;
-    size: string;
-    iceLevel: string;
-    sugarLevel: string;
-    quantity: string;
-  }>;
-}
+    price: number;
+  };
+} = {
+  "DA HONG PAO MILK TEA🍃 (RM15.00 / RM17.00) - Regular": {
+    drink: "Da Hong Pao Milk Tea",
+    price: 15,
+  },
+  "DA HONG PAO MILK TEA🍃 (RM15.00 / RM17.00) - Large": {
+    drink: "Da Hong Pao Milk Tea",
+    price: 17,
+  },
+  "JASMINE GREEN MILK TEA🌸 (RM14.00 / RM16.00) - Regular": {
+    drink: "Jasmine Green Milk Tea",
+    price: 14,
+  },
+  "JASMINE GREEN MILK TEA🌸 (RM14.00 / RM16.00) - Large": {
+    drink: "Jasmine Green Milk Tea",
+    price: 16,
+  },
+  "WHITE PEACH OOLONG MILK TEA🍑 (RM14.00 / RM16.00) - Regular": {
+    drink: "White Peach Oolong Milk Tea",
+    price: 14,
+  },
+  "WHITE PEACH OOLONG MILK TEA🍑 (RM14.00 / RM16.00) - Large": {
+    drink: "White Peach Oolong Milk Tea",
+    price: 16,
+  },
+};
 
 export default function DrinkDashboard({
   orders,
-  drinkSummary,
 }: {
   orders: Order[];
-  drinkSummary: DrinkSummary;
 }) {
   const [selectedDrink, setSelectedDrink] = useState<string>("");
+  const [drinkSummary, setDrinkSummary] = useState<DrinkSummary>({});
   const [isExpanded, setIsExpanded] = useState(false);
+
+  useEffect(() => {
+    const summary = calculateDrinkSummary(orders);
+    setDrinkSummary(summary);
+  }, [orders]);
 
   // Calculate total drinks
   const totalDrinks = Object.values(drinkSummary).reduce(
@@ -44,6 +70,36 @@ export default function DrinkDashboard({
       setIsExpanded(true);
     }
   };
+
+  const calculateDrinkSummary = (orders: Order[]): DrinkSummary => {
+    const summary: DrinkSummary = {};
+
+    orders.forEach((order) => {
+      order.drinks.forEach((drink) => {
+        const key = `${drink.drink} (${drink.size})`;
+        const customization = `${drink.iceLevel} , ${drink.sugarLevel} `;
+
+        if (!summary[key]) {
+          summary[key] = {
+            total: 0,
+            customizations: {},
+            totalPrice: 0,
+          };
+        }
+
+        summary[key].total += parseInt(drink.quantity);
+        summary[key].totalPrice += drink.price * parseInt(drink.quantity);
+
+        if (!summary[key].customizations[customization]) {
+          summary[key].customizations[customization] = 0;
+        }
+        summary[key].customizations[customization] += parseInt(drink.quantity);
+      });
+    });
+
+    return summary;
+  };
+
 
   return (
     <div className="bg-white rounded-xl shadow-md p-6">

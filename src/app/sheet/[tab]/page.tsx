@@ -213,7 +213,7 @@ export default function SheetPage() {
           <Loading />
         ) : (
           <div className="space-y-8">
-            <DrinkDashboard orders={order} drinkSummary={drinkSummary} />
+            <DrinkDashboard orders={order} />
 
             <AddressDashboard orders={order} />
 
