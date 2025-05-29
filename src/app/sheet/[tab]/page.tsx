@@ -19,7 +19,15 @@ export default function SheetPage() {
       drink: "Da Hong Pao Milk Tea",
       price: 15,
     },
+    "DA HONG PAO MILK TE🍃 (RM15.00 / RM17.00) - Regular": {
+      drink: "Da Hong Pao Milk Tea",
+      price: 15,
+    },
     "DA HONG PAO MILK TEA🍃 (RM15.00 / RM17.00) - Large": {
+      drink: "Da Hong Pao Milk Tea",
+      price: 17,
+    },
+    "DA HONG PAO MILK TE🍃 (RM15.00 / RM17.00) - Large": {
       drink: "Da Hong Pao Milk Tea",
       price: 17,
     },
